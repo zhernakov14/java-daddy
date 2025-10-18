@@ -1,4 +1,4 @@
-package ru.andr.javadaddy.advanced.collections.task1;
+package ru.andr.javadaddy.advanced.collections.topic1.task1;
 
 import java.util.ArrayList;
 import java.util.List;
