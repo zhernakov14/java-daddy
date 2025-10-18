@@ -1,25 +1,30 @@
 package ru.andr.javadaddy.based.converter.impl;
 
 import ru.andr.javadaddy.based.converter.BaseConverter;
-import ru.andr.javadaddy.based.converter.exception.ConversionException;
-import ru.andr.javadaddy.based.converter.util.ConverterUtil;
+import ru.andr.javadaddy.based.exception.ConversionException;
 import ru.andr.javadaddy.based.unit.WeightUnit;
 
-public class WeightConverter extends ConverterUtil implements BaseConverter<WeightUnit> {
+public class WeightConverter implements BaseConverter<WeightUnit> {
 
     private static final Double KILOGRAM_POUND = 0.45359;
     private static final Double KILOGRAM_OUNCE = 0.02835;
 
     @Override
-    public void convert(Double value, String fromUnit, String toUnit) throws ConversionException {
+    public void convert(Double value, WeightUnit fromUnit, WeightUnit toUnit) {
         
-        WeightUnit fromUnitEnum = parseUnit(WeightUnit.class, fromUnit);
-        WeightUnit toUnitEnum = parseUnit(WeightUnit.class, toUnit);
-
-        double inKilogram = toKilogram(value, fromUnitEnum);
-        double result = fromKilogram(inKilogram, toUnitEnum);
+        double inKilogram = toKilogram(value, fromUnit);
+        double result = fromKilogram(inKilogram, toUnit);
 
         System.out.printf("%.2f %s = %.2f %s%n", value, fromUnit, result, toUnit);
+    }
+
+    @Override
+    public WeightUnit parseUnit(String unitStr) throws ConversionException {
+        try {
+            return WeightUnit.valueOf(unitStr.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ConversionException("Unknown unit: " + unitStr);
+        }
     }
 
     private double toKilogram(double value, WeightUnit unit) {
