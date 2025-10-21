@@ -1,11 +1,12 @@
 package ru.andr.javadaddy.advanced.collections.topic2.task1;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class SetIntersection {
     public static void main(String[] args) {
-        HashSet<String> set1 = new HashSet<>();
-        HashSet<String> set2 = new HashSet<>();
+        Set<String> set1 = new HashSet<>();
+        Set<String> set2 = new HashSet<>();
 
         set1.add("Andrey");
         set1.add("Max");

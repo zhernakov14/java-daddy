@@ -2,10 +2,11 @@ package ru.andr.javadaddy.advanced.collections.topic1.task2;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class PerformanceCompare {
     public static void main(String[] args) {
-        ArrayList<Integer> listArray = new ArrayList<>();
+        List<Integer> listArray = new ArrayList<>();
         LinkedList<Integer> listLinked = new LinkedList<>();
         long start, end, res;
 
