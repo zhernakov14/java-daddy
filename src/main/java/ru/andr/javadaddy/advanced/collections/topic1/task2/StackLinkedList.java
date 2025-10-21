@@ -1,10 +1,11 @@
 package ru.andr.javadaddy.advanced.collections.topic1.task2;
 
+import java.util.Deque;
 import java.util.LinkedList;
 
 public class StackLinkedList {
     public static void main(String[] args) {
-        LinkedList<Integer> list = new LinkedList<>();
+        Deque<Integer> list = new LinkedList<>();
 
         list.push(1);
         System.out.println(list);

@@ -1,13 +1,14 @@
 package ru.andr.javadaddy.advanced.collections.topic1.task2;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
 public class PerformanceCompare {
     public static void main(String[] args) {
         List<Integer> listArray = new ArrayList<>();
-        LinkedList<Integer> listLinked = new LinkedList<>();
+        Deque<Integer> listLinked = new LinkedList<>();
         long start, end, res;
 
         start = System.nanoTime();

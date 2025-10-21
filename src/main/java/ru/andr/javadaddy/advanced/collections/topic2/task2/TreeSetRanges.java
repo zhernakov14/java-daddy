@@ -1,10 +1,11 @@
 package ru.andr.javadaddy.advanced.collections.topic2.task2;
 
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class TreeSetRanges {
     public static void main(String[] args) {
-        TreeSet<Integer> set = new TreeSet<>();
+        SortedSet<Integer> set = new TreeSet<>();
 
         for (int i = 1; i <= 20; i++) {
             set.add(i);
