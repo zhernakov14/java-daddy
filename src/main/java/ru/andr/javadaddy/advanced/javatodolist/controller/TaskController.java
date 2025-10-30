@@ -5,11 +5,14 @@ import ru.andr.javadaddy.advanced.javatodolist.service.TaskService;
 import ru.andr.javadaddy.advanced.javatodolist.util.TaskStatus;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.UUID;
+
+import static ru.andr.javadaddy.advanced.javatodolist.util.InputUtil.parseDate;
+import static ru.andr.javadaddy.advanced.javatodolist.util.InputUtil.parseId;
+import static ru.andr.javadaddy.advanced.javatodolist.util.InputUtil.parseStatus;
 
 public class TaskController {
 
@@ -61,16 +64,7 @@ public class TaskController {
         System.out.print("Введите описание задачи: ");
         String newTaskDescription = scanner.nextLine().trim();
 
-        LocalDate newTaskDate = null;
-        while (newTaskDate == null) {
-            System.out.print("Введите дату выполнения задачи в формате ГГГГ-ММ-ДД: ");
-            String input = scanner.nextLine().trim();
-            try {
-                newTaskDate = LocalDate.parse(input);
-            } catch (DateTimeParseException e) {
-                System.out.println("Неправильный формат даты, попробуйте еще раз.");
-            }
-        }
+        LocalDate newTaskDate = parseDate(scanner);
 
         Task task = taskService.addTask(newTaskName, newTaskDescription, newTaskDate);
         System.out.println("Создана задача: " + task.toString());
@@ -87,20 +81,11 @@ public class TaskController {
     }
 
     private void handleEdit() {
-        System.out.print("Введите ID задачи для редактирования: ");
-        String idInputForEdit = scanner.nextLine().trim();
-        UUID id;
-        try {
-            id = UUID.fromString(idInputForEdit);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Неверный формат ID.");
+        Optional<UUID> idOpt = parseId(scanner, taskService);
+        if (idOpt.isEmpty()) {
             return;
         }
-
-        if (taskService.getTask(id).isEmpty()) {
-            System.out.println("Задача с таким ID не найдена.");
-            return;
-        }
+        UUID id = idOpt.get();
 
         System.out.print("Новое название: ");
         String newTitle = scanner.nextLine().trim();
@@ -108,47 +93,20 @@ public class TaskController {
         System.out.print("Новое описание: ");
         String newDescription = scanner.nextLine().trim();
 
-        LocalDate newDueDate = null;
-        while (newDueDate == null) {
-            System.out.print("Новая дата (ГГГГ-ММ-ДД): ");
-            String dateInput = scanner.nextLine().trim();
-            try {
-                newDueDate = LocalDate.parse(dateInput);
-            } catch (DateTimeParseException e) {
-                System.out.println("Неправильный формат даты, попробуйте снова.");
-            }
-        }
+        LocalDate newDueDate = parseDate(scanner);
 
-        TaskStatus newStatus = null;
-        while (newStatus == null) {
-            System.out.print("Новый статус (TODO, IN_PROGRESS, DONE): ");
-            String statusInput = scanner.nextLine().trim().toUpperCase();
-            try {
-                newStatus = TaskStatus.valueOf(statusInput);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Неверный статус, попробуйте снова.");
-            }
-        }
+        TaskStatus newStatus = parseStatus(scanner);
 
         Optional<Task> updatedTask = taskService.editTask(id, newTitle, newDescription, newDueDate, newStatus);
         System.out.println("Задача успешно обновлена: " + updatedTask.get());
     }
 
     private void handleDelete() {
-        System.out.print("Введите ID задачи для удаления: ");
-        String idInputForDelete = scanner.nextLine().trim();
-        UUID id;
-        try {
-            id = UUID.fromString(idInputForDelete);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Неверный формат ID.");
+        Optional<UUID> idOpt = parseId(scanner, taskService);
+        if (idOpt.isEmpty()) {
             return;
         }
-
-        if (taskService.getTask(id).isEmpty()) {
-            System.out.println("Задача с таким ID не найдена.");
-            return;
-        }
+        UUID id = idOpt.get();
 
         if (taskService.deleteTask(id)) {
             System.out.println("Удаление прошло успешно");
@@ -156,10 +114,39 @@ public class TaskController {
     }
 
     private void handleFilter() {
-        // Логика фильтрации задач по статусу
+        TaskStatus status = parseStatus(scanner);
+        List<Task> filteredTasks = taskService.filterTasksByStatus(status);
+
+        if (filteredTasks.isEmpty()) {
+            System.out.println("Задачи со статусом " + status + " не найдены.");
+        } else {
+            System.out.println("Задачи со статусом " + status + ":");
+            filteredTasks.forEach(System.out::println);
+        }
     }
 
     private void handleSort() {
-        // Логика сортировки задач
+        System.out.println("Выберите критерий сортировки:");
+        System.out.println("1 - По дате выполнения");
+        System.out.println("2 - По статусу");
+
+        String choice = scanner.nextLine().trim();
+        List<Task> sortedTasks;
+
+        switch (choice) {
+            case "1":
+                sortedTasks = taskService.sortTasksByDueDate();
+                System.out.println("Задачи, отсортированные по дате выполнения:");
+                break;
+            case "2":
+                sortedTasks = taskService.sortTasksByStatus();
+                System.out.println("Задачи, отсортированные по статусу:");
+                break;
+            default:
+                System.out.println("Неверный выбор. Попробуйте снова.");
+                return;
+        }
+
+        sortedTasks.forEach(System.out::println);
     }
 }

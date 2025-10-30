@@ -6,7 +6,9 @@ import ru.andr.javadaddy.advanced.javatodolist.repository.TaskRepository;
 import ru.andr.javadaddy.advanced.javatodolist.util.TaskStatus;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,6 +41,24 @@ public class TaskService {
 
     public boolean deleteTask(UUID id) {
         return taskRepository.deleteById(id);
+    }
+
+    public List<Task> filterTasksByStatus(TaskStatus status) {
+        return taskRepository.findAll().stream()
+                .filter(task -> Objects.equals(task.getStatus(), status))
+                .toList();
+    }
+
+    public List<Task> sortTasksByDueDate() {
+        return taskRepository.findAll().stream()
+                .sorted(Comparator.comparing(Task::getDueDate))
+                .toList();
+    }
+
+    public List<Task> sortTasksByStatus() {
+        return taskRepository.findAll().stream()
+                .sorted(Comparator.comparing(Task::getStatus))
+                .toList();
     }
 
     public Optional<Task> getTask(UUID id) {
