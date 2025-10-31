@@ -8,10 +8,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.UUID;
 
 import static ru.andr.javadaddy.advanced.javatodolist.util.InputUtil.parseDate;
 import static ru.andr.javadaddy.advanced.javatodolist.util.InputUtil.parseId;
+import static ru.andr.javadaddy.advanced.javatodolist.util.InputUtil.parseNonEmptyString;
 import static ru.andr.javadaddy.advanced.javatodolist.util.InputUtil.parseStatus;
 
 public class TaskController {
@@ -25,6 +25,8 @@ public class TaskController {
     }
 
     public void run() {
+        printHelp();
+
         boolean exit = false;
         while (!exit) {
             System.out.print("Введите команду: ");
@@ -58,12 +60,8 @@ public class TaskController {
     }
 
     private void handleAdd() {
-        System.out.print("Введите название задачи: ");
-        String newTaskName = scanner.nextLine().trim();
-
-        System.out.print("Введите описание задачи: ");
-        String newTaskDescription = scanner.nextLine().trim();
-
+        String newTaskName = parseNonEmptyString(scanner, "Введите название задачи: ");
+        String newTaskDescription = parseNonEmptyString(scanner, "Введите описание задачи: ");
         LocalDate newTaskDate = parseDate(scanner);
 
         Task task = taskService.addTask(newTaskName, newTaskDescription, newTaskDate);
@@ -81,20 +79,15 @@ public class TaskController {
     }
 
     private void handleEdit() {
-        Optional<UUID> idOpt = parseId(scanner, taskService);
+        Optional<Long> idOpt = parseId(scanner, taskService);
         if (idOpt.isEmpty()) {
             return;
         }
-        UUID id = idOpt.get();
+        Long id = idOpt.get();
 
-        System.out.print("Новое название: ");
-        String newTitle = scanner.nextLine().trim();
-
-        System.out.print("Новое описание: ");
-        String newDescription = scanner.nextLine().trim();
-
+        String newTitle = parseNonEmptyString(scanner, "Введите название задачи: ");
+        String newDescription = parseNonEmptyString(scanner, "Введите описание задачи: ");
         LocalDate newDueDate = parseDate(scanner);
-
         TaskStatus newStatus = parseStatus(scanner);
 
         Optional<Task> updatedTask = taskService.editTask(id, newTitle, newDescription, newDueDate, newStatus);
@@ -102,11 +95,11 @@ public class TaskController {
     }
 
     private void handleDelete() {
-        Optional<UUID> idOpt = parseId(scanner, taskService);
+        Optional<Long> idOpt = parseId(scanner, taskService);
         if (idOpt.isEmpty()) {
             return;
         }
-        UUID id = idOpt.get();
+        Long id = idOpt.get();
 
         if (taskService.deleteTask(id)) {
             System.out.println("Удаление прошло успешно");
@@ -148,5 +141,17 @@ public class TaskController {
         }
 
         sortedTasks.forEach(System.out::println);
+    }
+
+    private void printHelp() {
+        System.out.println("Доступные команды:");
+        System.out.println(" add    - Добавить новую задачу");
+        System.out.println(" list   - Показать все задачи");
+        System.out.println(" edit   - Редактировать задачу");
+        System.out.println(" delete - Удалить задачу");
+        System.out.println(" filter - Показать задачи по статусу");
+        System.out.println(" sort   - Отсортировать задачи");
+        System.out.println(" exit   - Выйти из приложения");
+        System.out.println();
     }
 }

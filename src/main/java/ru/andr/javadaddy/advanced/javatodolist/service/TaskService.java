@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 @AllArgsConstructor
 public class TaskService {
@@ -18,7 +17,11 @@ public class TaskService {
     private final TaskRepository taskRepository;
 
     public Task addTask(String title, String description, LocalDate dueDate) {
-        Task task = new Task(UUID.randomUUID(), title, description, dueDate, TaskStatus.TODO);
+        Objects.requireNonNull(title, "Название задачи не может быть null");
+        Objects.requireNonNull(description, "Описание задачи не может быть null");
+        Objects.requireNonNull(dueDate, "Дата задачи не может быть null");
+
+        Task task = new Task(null, title, description, dueDate, TaskStatus.TODO);
         taskRepository.save(task);
         return task;
     }
@@ -27,7 +30,12 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public Optional<Task> editTask(UUID id, String newTitle, String newDescription, LocalDate newDueDate, TaskStatus newStatus) {
+    public Optional<Task> editTask(Long id, String newTitle, String newDescription, LocalDate newDueDate, TaskStatus newStatus) {
+        Objects.requireNonNull(newTitle, "Название задачи не может быть null");
+        Objects.requireNonNull(newDescription, "Описание задачи не может быть null");
+        Objects.requireNonNull(newDueDate, "Дата задачи не может быть null");
+        Objects.requireNonNull(newStatus, "Статус задачи не может быть null");
+
         Optional<Task> optionalTask = taskRepository.findById(id);
         optionalTask.ifPresent(task -> {
             task.setName(newTitle);
@@ -39,7 +47,7 @@ public class TaskService {
         return optionalTask;
     }
 
-    public boolean deleteTask(UUID id) {
+    public boolean deleteTask(Long  id) {
         return taskRepository.deleteById(id);
     }
 
@@ -61,8 +69,7 @@ public class TaskService {
                 .toList();
     }
 
-    public Optional<Task> getTask(UUID id) {
+    public Optional<Task> getTask(Long  id) {
         return taskRepository.findById(id);
     }
-
 }

@@ -6,9 +6,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.UUID;
 
 public class InputUtil {
+
+    public static String parseNonEmptyString(Scanner scanner, String promptMessage) {
+        String input;
+        do {
+            System.out.print(promptMessage);
+            input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Значение не может быть пустым. Попробуйте снова.");
+            }
+        } while (input.isEmpty());
+        return input;
+    }
 
     public static LocalDate parseDate(Scanner scanner) {
         LocalDate date = null;
@@ -24,14 +35,14 @@ public class InputUtil {
         return date;
     }
 
-    public static Optional<UUID> parseId(Scanner scanner, TaskService taskService) {
+    public static Optional<Long> parseId(Scanner scanner, TaskService taskService) {
         System.out.print("Введите ID задачи: ");
         String idInput = scanner.nextLine().trim();
-        UUID id;
+        Long id;
         try {
-            id = UUID.fromString(idInput);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Неверный формат ID.");
+            id = Long.parseLong(idInput);
+        } catch (NumberFormatException e) {
+            System.out.println("ID должен быть целым числом.");
             return Optional.empty();
         }
 
@@ -43,7 +54,6 @@ public class InputUtil {
     }
 
     public static TaskStatus parseStatus(Scanner scanner) {
-
         TaskStatus status = null;
         while (status == null) {
             System.out.print("Введите статус (TODO, IN_PROGRESS, DONE): ");

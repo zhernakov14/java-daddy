@@ -12,11 +12,9 @@ import ru.andr.javadaddy.advanced.javatodolist.util.TaskStatus;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -48,12 +46,11 @@ class TaskServiceTest {
         assertEquals(description, task.getDescription());
         assertEquals(dueDate, task.getDueDate());
         assertEquals(TaskStatus.TODO, task.getStatus());
-        assertNotNull(task.getId());
     }
 
     @Test
     void testEditTask_success() {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
         Task existingTask = new Task(id, "Old", "Old desc", LocalDate.now(), TaskStatus.TODO);
 
         when(repository.findById(id)).thenReturn(Optional.of(existingTask));
@@ -72,7 +69,7 @@ class TaskServiceTest {
 
     @Test
     void testEditTask_taskNotFound() {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
         when(repository.findById(id)).thenReturn(Optional.empty());
 
         Optional<Task> result = service.editTask(id, "Title", "Desc", LocalDate.now(), TaskStatus.DONE);
@@ -83,7 +80,7 @@ class TaskServiceTest {
 
     @Test
     void testDeleteTask_success() {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
         when(repository.deleteById(id)).thenReturn(true);
 
         boolean deleted = service.deleteTask(id);
@@ -94,7 +91,7 @@ class TaskServiceTest {
 
     @Test
     void testDeleteTask_deleteNotCompleted() {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
         when(repository.deleteById(id)).thenReturn(false);
 
         boolean deleted = service.deleteTask(id);
@@ -105,8 +102,8 @@ class TaskServiceTest {
 
     @Test
     void testFilterTasksByStatus_success() {
-        Task task1 = new Task(UUID.randomUUID(), "T1", "Desc1", LocalDate.now(), TaskStatus.TODO);
-        Task task2 = new Task(UUID.randomUUID(), "T2", "Desc2", LocalDate.now(), TaskStatus.DONE);
+        Task task1 = new Task(1L, "T1", "Desc1", LocalDate.now(), TaskStatus.TODO);
+        Task task2 = new Task(2L, "T2", "Desc2", LocalDate.now(), TaskStatus.DONE);
         when(repository.findAll()).thenReturn(List.of(task1, task2));
 
         List<Task> filtered = service.filterTasksByStatus(TaskStatus.TODO);
@@ -117,8 +114,8 @@ class TaskServiceTest {
 
     @Test
     void testSortTasksByDueDate_success() {
-        Task task1 = new Task(UUID.randomUUID(), "T1", "Desc1", LocalDate.now().plusDays(2), TaskStatus.TODO);
-        Task task2 = new Task(UUID.randomUUID(), "T2", "Desc2", LocalDate.now().plusDays(1), TaskStatus.DONE);
+        Task task1 = new Task(1L, "T1", "Desc1", LocalDate.now().plusDays(2), TaskStatus.TODO);
+        Task task2 = new Task(2L, "T2", "Desc2", LocalDate.now().plusDays(1), TaskStatus.DONE);
         when(repository.findAll()).thenReturn(List.of(task1, task2));
 
         List<Task> sorted = service.sortTasksByDueDate();
@@ -129,8 +126,8 @@ class TaskServiceTest {
 
     @Test
     void testSortTasksByStatus_success() {
-        Task task1 = new Task(UUID.randomUUID(), "T1", "Desc1", LocalDate.now(), TaskStatus.IN_PROGRESS);
-        Task task2 = new Task(UUID.randomUUID(), "T2", "Desc2", LocalDate.now(), TaskStatus.TODO);
+        Task task1 = new Task(1L, "T1", "Desc1", LocalDate.now(), TaskStatus.IN_PROGRESS);
+        Task task2 = new Task(2L, "T2", "Desc2", LocalDate.now(), TaskStatus.TODO);
         when(repository.findAll()).thenReturn(List.of(task1, task2));
 
         List<Task> sorted = service.sortTasksByStatus();
