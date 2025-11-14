@@ -64,7 +64,7 @@ public class TaskServiceImpl implements TaskService {
     public TaskDto updateTask(Long id, TaskDto taskDto) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(TASK_NOT_FOUND.formatted(id)));
-        TaskStatus newStatus = getTaskStatus(taskDto.getStatus());
+        TaskStatus newStatus = taskDto.getStatus();
         task.setName(taskDto.getName());
         task.setDescription(taskDto.getDescription());
         task.setDueDate(taskDto.getDueDate());

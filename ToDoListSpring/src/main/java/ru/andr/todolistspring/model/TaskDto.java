@@ -1,9 +1,11 @@
 package ru.andr.todolistspring.model;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.andr.todolistspring.util.enums.TaskStatus;
 
 import java.time.LocalDate;
 
@@ -19,7 +21,8 @@ public class TaskDto {
 
     private String description;
 
+    @FutureOrPresent
     private LocalDate dueDate;
 
-    private String status;
+    private TaskStatus status;
 }

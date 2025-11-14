@@ -50,7 +50,7 @@ public class TaskController {
 
     // Обновить задачу (редактировать)
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @RequestBody TaskDto taskDto) {
+    public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @Valid @RequestBody TaskDto taskDto) {
         TaskDto updatedTask = taskService.updateTask(id, taskDto);
         return ResponseEntity.ok(updatedTask);
     }

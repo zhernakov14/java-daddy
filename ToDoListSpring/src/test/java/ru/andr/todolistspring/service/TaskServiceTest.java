@@ -61,7 +61,7 @@ class TaskServiceTest {
         assertEquals(name, actual.getName());
         assertEquals(description, actual.getDescription());
         assertEquals(dueDate, actual.getDueDate());
-        assertEquals(TaskStatus.TODO.name(), actual.getStatus());
+        assertEquals(TaskStatus.TODO, actual.getStatus());
         verify(mapper).toTask(inputDto);
         verify(mapper).toTaskDto(savedTask);
     }
@@ -73,7 +73,7 @@ class TaskServiceTest {
         String name = "New title";
         String description = "New desc";
         LocalDate dueDate = LocalDate.now().plusDays(2);
-        TaskDto inputDto = new TaskDto(id, name, description, dueDate, "in_progress");
+        TaskDto inputDto = new TaskDto(id, name, description, dueDate, TaskStatus.IN_PROGRESS);
 
         Task savedTask = new Task();
         savedTask.setId(id);
@@ -90,7 +90,7 @@ class TaskServiceTest {
         assertEquals("New title", actual.getName());
         assertEquals("New desc", actual.getDescription());
         assertEquals(LocalDate.now().plusDays(2), actual.getDueDate());
-        assertEquals(TaskStatus.IN_PROGRESS.name(), actual.getStatus());
+        assertEquals(TaskStatus.IN_PROGRESS, actual.getStatus());
 
         verify(repository).save(existingTask);
     }
@@ -102,7 +102,7 @@ class TaskServiceTest {
         String name = "New title";
         String description = "New desc";
         LocalDate dueDate = LocalDate.now().plusDays(2);
-        TaskDto inputDto = new TaskDto(1L, name, description, dueDate, "in_progress");
+        TaskDto inputDto = new TaskDto(1L, name, description, dueDate, TaskStatus.IN_PROGRESS);
 
         assertThrows(RuntimeException.class, () -> service.updateTask(id, inputDto));
         verify(repository, never()).save(any());
@@ -136,7 +136,7 @@ class TaskServiceTest {
         List<TaskDto> filtered = service.getTasksByStatus(status);
 
         assertEquals(1, filtered.size());
-        assertEquals(TaskStatus.DONE.name(), filtered.get(0).getStatus());
+        assertEquals(TaskStatus.DONE, filtered.get(0).getStatus());
     }
 
     @Test
@@ -144,8 +144,8 @@ class TaskServiceTest {
         String parameter = "date";
         Task task1 = new Task(1L, "T1", "Desc1", LocalDate.now().plusDays(2), TaskStatus.DONE);
         Task task2 = new Task(2L, "T2", "Desc2", LocalDate.now().plusDays(1), TaskStatus.DONE);
-        TaskDto taskDto1 = new TaskDto(1L, "T1", "Desc1", LocalDate.now().plusDays(2), "DONE");
-        TaskDto taskDto2 = new TaskDto(2L, "T2", "Desc2", LocalDate.now().plusDays(1), "DONE");
+        TaskDto taskDto1 = new TaskDto(1L, "T1", "Desc1", LocalDate.now().plusDays(2), TaskStatus.DONE);
+        TaskDto taskDto2 = new TaskDto(2L, "T2", "Desc2", LocalDate.now().plusDays(1), TaskStatus.DONE);
         when(repository.findAll()).thenReturn(List.of(task1, task2));
 
         List<TaskDto> sorted = service.sort(parameter);
@@ -159,8 +159,8 @@ class TaskServiceTest {
         String parameter = "status";
         Task task1 = new Task(1L, "T1", "Desc1", LocalDate.now().plusDays(2), TaskStatus.IN_PROGRESS);
         Task task2 = new Task(2L, "T2", "Desc2", LocalDate.now().plusDays(1), TaskStatus.TODO);
-        TaskDto taskDto1 = new TaskDto(1L, "T1", "Desc1", LocalDate.now().plusDays(2), "IN_PROGRESS");
-        TaskDto taskDto2 = new TaskDto(2L, "T2", "Desc2", LocalDate.now().plusDays(1), "TODO");
+        TaskDto taskDto1 = new TaskDto(1L, "T1", "Desc1", LocalDate.now().plusDays(2), TaskStatus.IN_PROGRESS);
+        TaskDto taskDto2 = new TaskDto(2L, "T2", "Desc2", LocalDate.now().plusDays(1), TaskStatus.TODO);
         when(repository.findAll()).thenReturn(List.of(task1, task2));
 
         List<TaskDto> sorted = service.sort(parameter);
